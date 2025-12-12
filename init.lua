@@ -114,7 +114,7 @@ require("lazy").setup({
     config = true,
   },
 
-  {
+{
     "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
@@ -122,6 +122,27 @@ require("lazy").setup({
         git = { enable = true },
         view = { width = 30 },
         renderer = { group_empty = true },
+        
+        -- ADICIONE ESTE BLOCO FILTERS:
+        filters = {
+            dotfiles = false,    -- Garante que arquivos com ponto apareçam
+            git_ignored = false, -- Mostra arquivos ignorados pelo git (aqui o .env aparece)
+            
+            -- Aqui você "limpa" a sujeira manualmente
+            custom = { 
+                -- Tradução do seu VSCode:
+                "^.git$", 
+                "^.svn$", 
+                "^.hg$", 
+                "^.DS_Store$", 
+                "^Thumbs.db$", 
+                "^__pycache__$", 
+                
+                -- Extras que recomendo manter (como falamos antes):
+                "^.ruff_cache$",
+                "%.pyc$" -- Esconde arquivos compilados do python
+            },
+        },
       })
       vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { silent = true })
     end,

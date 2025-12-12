@@ -24,6 +24,10 @@ opt.smartcase = true
 opt.updatetime = 300
 opt.wrap = false
 
+-- EFEITO VIDRO (Apenas em menus/popups)
+opt.winblend = 10       -- Transparência em janelas flutuantes
+opt.pumblend = 10       -- Transparência em menus de autocomplete
+
 -- Atalhos gerais
 vim.keymap.set("n", "<leader>w", ":w<CR>", { silent = true, desc = "Salvar" })
 vim.keymap.set("n", "<leader>q", ":bd<CR>", { silent = true, desc = "Fechar buffer atual" })
@@ -66,17 +70,22 @@ require("lazy").setup({
   },
 
   -------------------------------------------------------
-  -- TEMAS
+  -- TEMA (NORD)
   -------------------------------------------------------
-  { "rose-pine/neovim", name = "rose-pine", priority = 1000 },
   {
-    "scottmckendry/cyberdream.nvim",
-    priority = 900,
+    "shaunsingh/nord.nvim",
+    lazy = false,
+    priority = 1000,
     config = function()
-      require("cyberdream").setup({
-        transparent = true,
-        italic_comments = true,
-      })
+      -- Configurações do Nord
+      vim.g.nord_contrast = true   -- Diferencia a cor da sidebar e janelas
+      vim.g.nord_borders = true    -- Habilita bordas entre divisões
+      vim.g.nord_disable_background = false -- Mantém o fundo azul acinzentado do tema
+      vim.g.nord_italic = true     -- Habilita itálico em comentários
+      vim.g.nord_uniform_diff_background = true 
+
+      -- Carrega o tema
+      require("nord").set()
     end,
   },
 
@@ -87,7 +96,15 @@ require("lazy").setup({
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
-      require("lualine").setup({ options = { icons_enabled = true } })
+      require("lualine").setup({ 
+        options = { 
+            icons_enabled = true, 
+            theme = "nord", -- Integrando o tema na barra de status
+            globalstatus = true,
+            component_separators = '|',
+            section_separators = '',
+        } 
+      })
     end,
   },
 
@@ -103,6 +120,8 @@ require("lazy").setup({
     config = function()
       require("nvim-tree").setup({
         git = { enable = true },
+        view = { width = 30 },
+        renderer = { group_empty = true },
       })
       vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { silent = true })
     end,
@@ -116,7 +135,16 @@ require("lazy").setup({
       require("bufferline").setup({
         options = {
           diagnostics = "nvim_lsp",
-          separator_style = "slant",
+          separator_style = "slant", 
+          offsets = {
+            {
+                filetype = "NvimTree",
+                text = "File Explorer",
+                highlight = "Directory",
+                text_align = "left",
+                padding = 1,
+            }
+          }
         },
       })
       vim.keymap.set("n", "<Tab>", ":BufferLineCycleNext<CR>")
@@ -125,7 +153,7 @@ require("lazy").setup({
   },
 
   -------------------------------------------------------
-  -- TELESCOPE (com ignore)
+  -- TELESCOPE
   -------------------------------------------------------
   {
     "nvim-telescope/telescope.nvim",
@@ -137,11 +165,10 @@ require("lazy").setup({
           file_ignore_patterns = {
             "__pycache__",
             "%.pyc",
-            "%.pyo",
-            "%.pyi",
             ".git/",
             "node_modules/",
           },
+          winblend = 10, -- Transparência interna do Telescope
         },
       })
 
@@ -259,6 +286,10 @@ require("lazy").setup({
 
       cmp.setup({
         snippet = { expand = function(args) luasnip.lsp_expand(args.body) end },
+        window = {
+            completion = cmp.config.window.bordered(),
+            documentation = cmp.config.window.bordered(),
+        },
         mapping = cmp.mapping.preset.insert({
           ["<CR>"] = cmp.mapping.confirm({ select = true }),
         }),
@@ -272,10 +303,6 @@ require("lazy").setup({
       })
     end,
   },
-
-  -------------------------------------------------------
-  -- IMPORTMAGIC (imports automáticos Python)
-  -------------------------------------------------------
 
   -------------------------------------------------------
   -- FORMATTER: isort + black via none-ls
@@ -300,12 +327,6 @@ require("lazy").setup({
   },
 
 })
-
------------------------------------------------------------
--- Tema
------------------------------------------------------------
-vim.o.background = "dark"
-vim.cmd.colorscheme("cyberdream")
 
 -----------------------------------------------------------
 -- Terminal Inteligente

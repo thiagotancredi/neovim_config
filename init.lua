@@ -286,7 +286,98 @@ require("lazy").setup({
       })
     end,
   },
+  -------------------------------------------------------
+  -- GITHUB COPILOT
+  -------------------------------------------------------
+{
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+        suggestion = {
+          enabled = true,
+          auto_trigger = true,
+          keymap = {
+            accept = "<C-l>", -- CTRL + l para aceitar a sugestão
+            next = "<M-]>",   -- Alt + ] para próxima sugestão
+            prev = "<M-[>",   -- Alt + [ para sugestão anterior
+            dismiss = "<C-]>",
+          },
+        },
+        panel = { 
+          enabled = true,
+          auto_refresh = false,
+          keymap = {
+            jump_prev = "[[",
+            jump_next = "]]",
+            accept = "<CR>",
+            refresh = "gr",
+            open = "<M-CR>" -- Alt + Enter para abrir o painel
+          },
+        },
+      })
+    end,
+  },
 
+  -------------------------------------------------------
+  -- COPILOT CHAT (Conversar com a IA)
+  -------------------------------------------------------
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    branch = "main",
+    dependencies = {
+      { "zbirenbaum/copilot.lua" },
+      { "nvim-lua/plenary.nvim" },
+    },
+    build = "make tiktoken",
+    opts = {
+      debug = false,
+      
+      -- CONFIGURAÇÃO DA JANELA
+      window = {
+        layout = 'float',
+        width = 0.5,
+        height = 0.5,
+      },
+
+      -- ATALHOS DENTRO DO CHAT
+      mappings = {
+        complete = {
+          detail = 'Usar sugestão',
+          insert = '<C-l>', -- Ctrl + l para aceitar sugestão enquanto digita
+        },
+        close = {
+          normal = 'q',
+          insert = '<C-c>'
+        },
+        reset = {
+          normal = '<C-r>',
+          insert = '<C-r>'
+        },
+        submit_prompt = {
+          normal = '<CR>',
+          insert = '<CR>' -- GARANTE QUE O ENTER ENVIA A MENSAGEM
+        },
+        accept_diff = {
+          normal = '<C-y>',
+          insert = '<C-y>'
+        },
+        yank_diff = {
+          normal = 'gy',
+        },
+        show_diff = {
+          normal = 'gd',
+        },
+      },
+    },
+    keys = {
+      { "<leader>cc", ":CopilotChatToggle<CR>", desc = "Copilot Chat (Toggle)" },
+      { "<leader>ce", ":CopilotChatExplain<CR>", mode = "v", desc = "Copilot: Explicar" },
+      { "<leader>cf", ":CopilotChatFix<CR>", mode = "v", desc = "Copilot: Corrigir" },
+      { "<leader>ct", ":CopilotChatTests<CR>", mode = "v", desc = "Copilot: Gerar Testes" },
+    },
+  },
   -------------------------------------------------------
   -- AUTOCOMPLETE
   -------------------------------------------------------

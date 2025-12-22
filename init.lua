@@ -78,11 +78,11 @@ require("lazy").setup({
     priority = 1000,
     config = function()
       -- Configurações do Nord
-      vim.g.nord_contrast = true   -- Diferencia a cor da sidebar e janelas
-      vim.g.nord_borders = true    -- Habilita bordas entre divisões
-      vim.g.nord_disable_background = false -- Mantém o fundo azul acinzentado do tema
-      vim.g.nord_italic = true     -- Habilita itálico em comentários
-      vim.g.nord_uniform_diff_background = true 
+      vim.g.nord_contrast = true
+      vim.g.nord_borders = true
+      vim.g.nord_disable_background = false
+      vim.g.nord_italic = true
+      vim.g.nord_uniform_diff_background = true
 
       -- Carrega o tema
       require("nord").set()
@@ -96,14 +96,14 @@ require("lazy").setup({
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
-      require("lualine").setup({ 
-        options = { 
-            icons_enabled = true, 
-            theme = "nord", -- Integrando o tema na barra de status
-            globalstatus = true,
-            component_separators = '|',
-            section_separators = '',
-        } 
+      require("lualine").setup({
+        options = {
+          icons_enabled = true,
+          theme = "nord",
+          globalstatus = true,
+          component_separators = '|',
+          section_separators = '',
+        }
       })
     end,
   },
@@ -114,36 +114,36 @@ require("lazy").setup({
     config = true,
   },
 
-{
+  {
     "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
       require("nvim-tree").setup({
         git = { enable = true },
         view = { width = 30 },
-        renderer = { group_empty = true },
-        
-        -- ADICIONE ESTE BLOCO FILTERS:
+
+        -- NÃO compactar pasta_pai/pasta_filho e mostrar indentação
+        renderer = {
+          group_empty = false,
+          indent_markers = { enable = true },
+        },
+
         filters = {
-            dotfiles = false,    -- Garante que arquivos com ponto apareçam
-            git_ignored = false, -- Mostra arquivos ignorados pelo git (aqui o .env aparece)
-            
-            -- Aqui você "limpa" a sujeira manualmente
-            custom = { 
-                -- Tradução do seu VSCode:
-                "^.git$", 
-                "^.svn$", 
-                "^.hg$", 
-                "^.DS_Store$", 
-                "^Thumbs.db$", 
-                "^__pycache__$", 
-                
-                -- Extras que recomendo manter (como falamos antes):
-                "^.ruff_cache$",
-                "%.pyc$" -- Esconde arquivos compilados do python
-            },
+          dotfiles = false,
+          git_ignored = false,
+          custom = {
+            "^.git$",
+            "^.svn$",
+            "^.hg$",
+            "^.DS_Store$",
+            "^Thumbs.db$",
+            "^__pycache__$",
+            "^.ruff_cache$",
+            "%.pyc$",
+          },
         },
       })
+
       vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { silent = true })
     end,
   },
@@ -156,14 +156,14 @@ require("lazy").setup({
       require("bufferline").setup({
         options = {
           diagnostics = "nvim_lsp",
-          separator_style = "slant", 
+          separator_style = "slant",
           offsets = {
             {
-                filetype = "NvimTree",
-                text = "File Explorer",
-                highlight = "Directory",
-                text_align = "left",
-                padding = 1,
+              filetype = "NvimTree",
+              text = "File Explorer",
+              highlight = "Directory",
+              text_align = "left",
+              padding = 1,
             }
           }
         },
@@ -189,7 +189,7 @@ require("lazy").setup({
             ".git/",
             "node_modules/",
           },
-          winblend = 10, -- Transparência interna do Telescope
+          winblend = 10,
         },
       })
 
@@ -254,7 +254,7 @@ require("lazy").setup({
         map("gr", vim.lsp.buf.references, "Referências")
         map("<leader>rn", vim.lsp.buf.rename, "Renomear")
         map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
-        map("<leader>f", function() vim.lsp.buf.format({ async = true }) end, "Formatar")
+        -- Sem <leader>f aqui (formatação ficará só no terminal)
       end
 
       mason_lspconfig.setup({
@@ -277,6 +277,9 @@ require("lazy").setup({
                     autoSearchPaths = true,
                     diagnosticMode = "workspace",
                     typeCheckingMode = "basic",
+                    diagnosticSeverityOverrides = {
+                      reportPrivateImportUsage = "none",
+                    },
                   },
                 },
               },
@@ -286,10 +289,11 @@ require("lazy").setup({
       })
     end,
   },
+
   -------------------------------------------------------
   -- GITHUB COPILOT
   -------------------------------------------------------
-{
+  {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
     event = "InsertEnter",
@@ -299,13 +303,13 @@ require("lazy").setup({
           enabled = true,
           auto_trigger = true,
           keymap = {
-            accept = "<C-l>", -- CTRL + l para aceitar a sugestão
-            next = "<M-]>",   -- Alt + ] para próxima sugestão
-            prev = "<M-[>",   -- Alt + [ para sugestão anterior
+            accept = "<C-l>",
+            next = "<M-]>",
+            prev = "<M-[>",
             dismiss = "<C-]>",
           },
         },
-        panel = { 
+        panel = {
           enabled = true,
           auto_refresh = false,
           keymap = {
@@ -313,7 +317,7 @@ require("lazy").setup({
             jump_next = "]]",
             accept = "<CR>",
             refresh = "gr",
-            open = "<M-CR>" -- Alt + Enter para abrir o painel
+            open = "<M-CR>"
           },
         },
       })
@@ -321,7 +325,7 @@ require("lazy").setup({
   },
 
   -------------------------------------------------------
-  -- COPILOT CHAT (Conversar com a IA)
+  -- COPILOT CHAT
   -------------------------------------------------------
   {
     "CopilotC-Nvim/CopilotChat.nvim",
@@ -333,42 +337,19 @@ require("lazy").setup({
     build = "make tiktoken",
     opts = {
       debug = false,
-      
-      -- CONFIGURAÇÃO DA JANELA
       window = {
         layout = 'float',
         width = 0.5,
         height = 0.5,
       },
-
-      -- ATALHOS DENTRO DO CHAT
       mappings = {
-        complete = {
-          detail = 'Usar sugestão',
-          insert = '<C-l>', -- Ctrl + l para aceitar sugestão enquanto digita
-        },
-        close = {
-          normal = 'q',
-          insert = '<C-c>'
-        },
-        reset = {
-          normal = '<C-r>',
-          insert = '<C-r>'
-        },
-        submit_prompt = {
-          normal = '<CR>',
-          insert = '<CR>' -- GARANTE QUE O ENTER ENVIA A MENSAGEM
-        },
-        accept_diff = {
-          normal = '<C-y>',
-          insert = '<C-y>'
-        },
-        yank_diff = {
-          normal = 'gy',
-        },
-        show_diff = {
-          normal = 'gd',
-        },
+        complete = { detail = 'Usar sugestão', insert = '<C-l>' },
+        close = { normal = 'q', insert = '<C-c>' },
+        reset = { normal = '<C-r>', insert = '<C-r>' },
+        submit_prompt = { normal = '<CR>', insert = '<CR>' },
+        accept_diff = { normal = '<C-y>', insert = '<C-y>' },
+        yank_diff = { normal = 'gy' },
+        show_diff = { normal = 'gd' },
       },
     },
     keys = {
@@ -378,6 +359,7 @@ require("lazy").setup({
       { "<leader>ct", ":CopilotChatTests<CR>", mode = "v", desc = "Copilot: Gerar Testes" },
     },
   },
+
   -------------------------------------------------------
   -- AUTOCOMPLETE
   -------------------------------------------------------
@@ -399,8 +381,8 @@ require("lazy").setup({
       cmp.setup({
         snippet = { expand = function(args) luasnip.lsp_expand(args.body) end },
         window = {
-            completion = cmp.config.window.bordered(),
-            documentation = cmp.config.window.bordered(),
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
         },
         mapping = cmp.mapping.preset.insert({
           ["<CR>"] = cmp.mapping.confirm({ select = true }),
@@ -413,28 +395,6 @@ require("lazy").setup({
           { name = "path" },
         }),
       })
-    end,
-  },
-
-  -------------------------------------------------------
-  -- FORMATTER: isort + black via none-ls
-  -------------------------------------------------------
-  {
-    "nvimtools/none-ls.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-      local null_ls = require("null-ls")
-
-      null_ls.setup({
-        sources = {
-          null_ls.builtins.formatting.black,
-          null_ls.builtins.formatting.isort,
-        },
-      })
-
-      vim.keymap.set("n", "<leader>f", function()
-        vim.lsp.buf.format({ async = true })
-      end, { desc = "Formatar (Black + Isort)" })
     end,
   },
 

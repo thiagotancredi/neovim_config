@@ -432,7 +432,7 @@ local function close_smart_terminal()
     vim.cmd("bd!")
   else
     print("Use <leader>q para fechar buffers normais.")
-  end
+  end 
 end
 
 vim.keymap.set("n", "<C-j>", open_smart_terminal)

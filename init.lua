@@ -23,6 +23,7 @@ opt.ignorecase = true
 opt.smartcase = true
 opt.updatetime = 300
 opt.wrap = false
+opt.clipboard = "unnamedplus"
 
 -- EFEITO VIDRO (Apenas em menus/popups)
 opt.winblend = 10       -- Transparência em janelas flutuantes
@@ -176,29 +177,40 @@ require("lazy").setup({
   -------------------------------------------------------
   -- TELESCOPE
   -------------------------------------------------------
-  {
-    "nvim-telescope/telescope.nvim",
-    tag = "0.1.6",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-      require("telescope").setup({
-        defaults = {
-          file_ignore_patterns = {
-            "__pycache__",
-            "%.pyc",
-            ".git/",
-            "node_modules/",
-          },
-          winblend = 10,
-        },
-      })
+{
+  "nvim-telescope/telescope.nvim",
+  tag = "0.1.6",
+  dependencies = { "nvim-lua/plenary.nvim" },
+  config = function()
+    local telescope = require("telescope")
+    local actions = require("telescope.actions")
+    local builtin = require("telescope.builtin")
 
-      local builtin = require("telescope.builtin")
-      vim.keymap.set("n", "<leader>ff", builtin.find_files)
-      vim.keymap.set("n", "<leader>fg", builtin.live_grep)
-      vim.keymap.set("n", "<leader>fb", builtin.buffers)
-    end,
-  },
+    telescope.setup({
+      defaults = {
+        file_ignore_patterns = {
+          "__pycache__",
+          "%.pyc",
+          ".git/",
+          "node_modules/",
+        },
+        winblend = 10,
+      },
+      pickers = {
+        buffers = {
+          mappings = {
+            i = { ["<C-d>"] = actions.delete_buffer },
+            n = { ["d"] = actions.delete_buffer },
+          },
+        },
+      },
+    })
+
+    vim.keymap.set("n", "<leader>ff", builtin.find_files)
+    vim.keymap.set("n", "<leader>fg", builtin.live_grep)
+    vim.keymap.set("n", "<leader>fb", builtin.buffers)
+  end,
+},
 
   -------------------------------------------------------
   -- TREESITTER
